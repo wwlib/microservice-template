@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@handlers": [
+        "src/handlers"
+      ],
+      "@types": [
+        "src/types"
+      ],
+      "@errors": [
+        "src/errors"
+      ],
+      "@model": [
+        "src/model"
+      ],
+      "@auth": [
+        "src/auth"
+      ]
+    }
+  }
+}

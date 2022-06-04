@@ -1,0 +1,5 @@
+dist
+hide
+node_modules
+.env
+notebooks

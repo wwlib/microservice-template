@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="en">
+
+<!-- See: https://getbootstrap.com/docs/5.2/examples/dashboard/ -->
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+
+    <link href="/dashboard/dashboard.css" rel="stylesheet">
+
+    <script src="/auth/auth.js"></script>
+
+</head>
+
+<body>
+    <header class="navbar navbar-dark sticky-top bg-dark flex-md-nowrap p-0 shadow">
+        <a class="navbar-brand col-md-3 col-lg-2 me-0 px-3 fs-6" href="/">Microservice name</a>
+        <input class="form-control form-control-dark w-100 rounded-0 border-0" type="text" placeholder="Search"
+            aria-label="Search">
+        <div class="navbar-nav navbar-userId">
+            <div class="navbar-userId-label">userId:</div>
+            <div>{{userId}}</div>
+        </div>
+        <div class="navbar-nav">
+            <div class="nav-item text-nowrap">
+                <div class="nav-link px-3" onclick="signOut()">Sign out</div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container-fluid">
+        <div class="row">
+            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block bg-light sidebar collapse">
+                <div class="position-sticky pt-3">
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link {{linkStates.dashboard}}" href="/dashboard/">
+                                <span data-feather="home" class="align-text-bottom"></span>
+                                Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{linkStates.console}}" href="/console/">
+                                <span data-feather="layers" class="align-text-bottom"></span>
+                                Console
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/signin/">
+                                <span data-feather="users" class="align-text-bottom"></span>
+                                Sign in
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+                <div
+                    class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+                    <h1 class="h2">Dashboard</h1>
+                    <div class="btn-toolbar mb-2 mb-md-0">
+                        <div class="btn-group me-2">
+                            <button type="button" class="btn btn-sm btn-outline-secondary">Share</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary">Export</button>
+                        </div>
+                    </div>
+                </div>
+
+                <h2>Stats</h2>
+                <div class="col-sm-6">
+                    <label for="requestCount" class="form-label">Request Count</label>
+                    <input type="text" class="form-control" id="requestCount" placeholder="" value="{{requestCount}}"
+                        required>
+                    <p></p>
+                </div>
+
+                <h2>Activity (placeholder)</h2>
+                <canvas class="my-4 w-75" id="myChart" width="900" height="200"></canvas>
+
+                <h2>Events (placeholder)</h2>
+                <div class="table-responsive w-75">
+                    <table class="table table-striped table-sm">
+                        <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">Header</th>
+                                <th scope="col">Header</th>
+                                <th scope="col">Header</th>
+                                <th scope="col">Header</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1,001</td>
+                                <td>random</td>
+                                <td>data</td>
+                                <td>placeholder</td>
+                                <td>text</td>
+                            </tr>
+                            <tr>
+                                <td>1,002</td>
+                                <td>placeholder</td>
+                                <td>irrelevant</td>
+                                <td>visual</td>
+                                <td>layout</td>
+                            </tr>
+                            <tr>
+                                <td>1,003</td>
+                                <td>data</td>
+                                <td>rich</td>
+                                <td>dashboard</td>
+                                <td>tabular</td>
+                            </tr>
+                            <tr>
+                                <td>1,003</td>
+                                <td>information</td>
+                                <td>placeholder</td>
+                                <td>illustrative</td>
+                                <td>data</td>
+                            </tr>
+                            <tr>
+                                <td>1,004</td>
+                                <td>text</td>
+                                <td>random</td>
+                                <td>layout</td>
+                                <td>dashboard</td>
+                            </tr>
+                            <tr>
+                                <td>1,005</td>
+                                <td>dashboard</td>
+                                <td>irrelevant</td>
+                                <td>text</td>
+                                <td>placeholder</td>
+                            </tr>
+                            <tr>
+                                <td>1,006</td>
+                                <td>dashboard</td>
+                                <td>illustrative</td>
+                                <td>rich</td>
+                                <td>data</td>
+                            </tr>
+                            <tr>
+                                <td>1,007</td>
+                                <td>placeholder</td>
+                                <td>tabular</td>
+                                <td>information</td>
+                                <td>irrelevant</td>
+                            </tr>
+                            <tr>
+                                <td>1,008</td>
+                                <td>random</td>
+                                <td>data</td>
+                                <td>placeholder</td>
+                                <td>text</td>
+                            </tr>
+                            <tr>
+                                <td>1,009</td>
+                                <td>placeholder</td>
+                                <td>irrelevant</td>
+                                <td>visual</td>
+                                <td>layout</td>
+                            </tr>
+                            <tr>
+                                <td>1,010</td>
+                                <td>data</td>
+                                <td>rich</td>
+                                <td>dashboard</td>
+                                <td>tabular</td>
+                            </tr>
+                            <tr>
+                                <td>1,011</td>
+                                <td>information</td>
+                                <td>placeholder</td>
+                                <td>illustrative</td>
+                                <td>data</td>
+                            </tr>
+                            <tr>
+                                <td>1,012</td>
+                                <td>text</td>
+                                <td>placeholder</td>
+                                <td>layout</td>
+                                <td>dashboard</td>
+                            </tr>
+                            <tr>
+                                <td>1,013</td>
+                                <td>dashboard</td>
+                                <td>irrelevant</td>
+                                <td>text</td>
+                                <td>visual</td>
+                            </tr>
+                            <tr>
+                                <td>1,014</td>
+                                <td>dashboard</td>
+                                <td>illustrative</td>
+                                <td>rich</td>
+                                <td>data</td>
+                            </tr>
+                            <tr>
+                                <td>1,015</td>
+                                <td>random</td>
+                                <td>tabular</td>
+                                <td>information</td>
+                                <td>text</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </main>
+        </div>
+
+        <footer
+            class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3">
+            <div></div>
+            <div class="align-items-center">
+                <span class="mb-3 mb-md-0 text-muted"><a href='https://github.com/wwlib/microservice-template'>@wwlib:
+                        Microservice Template</a></span>
+            </div>
+            <div></div>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/feather-icons@4.28.0/dist/feather.min.js"
+        integrity="sha384-uO3SXW5IuS1ZpFPKugNNWqTZRRglnUJK6UAZ/gxOX80nxEkN9NcGZTftn6RzhGWE"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"
+        integrity="sha384-zNy6FEbO50N+Cg5wap8IKA4M/ZnLJgzc6w2NqACZaK0u0FXfOWRRJOnQtpZun8ha"
+        crossorigin="anonymous"></script>
+    <script>
+        function getLabels() {
+            return [
+                'Sunday',
+                'Monday',
+                'Tuesday',
+                'Wednesday',
+                'Thursday',
+                'Friday',
+                'Saturday'
+            ]
+        }
+
+        function getData() {
+            return [{{ chartData }}]
+        }
+    </script>
+
+    <script src="/dashboard/dashboard.js"></script>
+</body>
+
+</html>

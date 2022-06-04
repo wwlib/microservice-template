@@ -1,0 +1,14 @@
+{
+  "name": "ws-template-tools",
+  "version": "0.0.1",
+  "description": "",
+  "main": "socket-cli.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Andrew Rapo <andrew@wwlib.org> (http://wwlib.org/)",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.24.0"
+  }
+}
