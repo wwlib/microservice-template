@@ -10,9 +10,8 @@ function setupSigninForm() {
         request.setRequestHeader("Content-Type", "application/json")
         request.onreadystatechange = function () {
             if (request.readyState === 4 && request.status === 200) {
-                var jsonData = JSON.parse(request.response);
-                console.log(jsonData)
-                console.log(document.cookie.split(";"))
+                // var jsonData = JSON.parse(request.response);
+                // console.log(jsonData)
                 window.location.href = "/console/";
             }
         }
@@ -25,22 +24,17 @@ function setupSigninForm() {
 
 function signOut() {
     console.log('signOut')
-    const cookies = document.cookie.split(";");
-    cookies.forEach(cookie => {
-        console.log(cookie)
-
-    })
     var request = new XMLHttpRequest()
     var url = "/auth";
     request.open("POST", url, true)
     request.setRequestHeader("Content-Type", "application/json")
     request.onreadystatechange = function () {
         if (request.readyState === 4 && request.status === 200) {
-            var jsonData = JSON.parse(request.response);
-            console.log(jsonData)
+            // var jsonData = JSON.parse(request.response);
+            // console.log(jsonData)
+            window.location.href = "/signin/";
         }
     }
     var data = JSON.stringify({ }) // no credentials -> logout
     request.send(data)
-    window.location.href = "/signin/";
 }

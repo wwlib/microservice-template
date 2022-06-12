@@ -13,7 +13,4 @@ COPY --chown=${CONTAINER_USER} . .
 RUN npm install
 RUN npm run build
 
-# ENV SERVER_PORT=$CONTAINER_EXPOSE_PORT
-# EXPOSE $CONTAINER_EXPOSE_PORT
-
 ENTRYPOINT ["node", "dist/index.js"]

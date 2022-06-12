@@ -7,11 +7,11 @@ const axios = require('axios');
 
 dotenv.config();
 
-// curl --location --request POST 'https://api.development.v2.jibo.com/v2/auth/login' \
+// curl --location --request POST 'https://localhost:8000/auth' \
 //     --header 'Content-Type: application/json' \
 //     --data-raw '{
-//        "username": "",
-//        "password": ""
+//        "username": "user1",
+//        "password": "asldkfj"
 //      }'
 
 async function getToken() {
@@ -27,7 +27,7 @@ async function getToken() {
                 headers: { 'Content-Type': 'application/json'}
             })
                 .then(function (response) {
-                    console.log(response);
+                    // console.log(response);
                     resolve(response.data.access_token);
                 })
                 .catch(function (error) {
@@ -48,7 +48,7 @@ function connect(token) {
     });
 
     console.log(`URL:`, process.env.URL);
-    console.log('token:', token);
+    // console.log('token:', token);
     const ws = new WebSocket(process.env.URL, { headers: { Authorization: `Bearer ${token}` } })
 
     ws.on('open', () => {
