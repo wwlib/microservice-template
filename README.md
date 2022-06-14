@@ -38,6 +38,18 @@ USE_AUTH=true
 
 ### curl
 
+Without auth:
+
+```sh
+curl --location --request POST 'http://localhost:8000/post' \
+     --header 'Content-Type: application/json' \
+     --data-raw '{
+       "utterance": "hello"
+     }'
+```
+
+With auth
+
 ```sh
 curl --location --request POST 'http://localhost:8000/post' \
      --header 'Content-Type: application/json' \

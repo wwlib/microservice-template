@@ -12,7 +12,7 @@ function setupSigninForm() {
             if (request.readyState === 4 && request.status === 200) {
                 // var jsonData = JSON.parse(request.response);
                 // console.log(jsonData)
-                window.location.href = "/console/";
+                window.location.href = "/";
             }
         }
         var username = document.getElementById("usernameField").value
