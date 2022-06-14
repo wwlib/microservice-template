@@ -8,6 +8,10 @@ A template for creating node microservices with:
 - JWT auth
 - docker support
 
+### medium article
+
+See: [A Nodejs Microservice Template](https://medium.com/@andrew.rapo/a-nodejs-microservice-template-36f080fe1418)
+
 ### install
 
 `npm install`
