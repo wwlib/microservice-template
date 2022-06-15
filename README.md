@@ -12,6 +12,12 @@ A template for creating node microservices with:
 
 See: [A Nodejs Microservice Template](https://medium.com/@andrew.rapo/a-nodejs-microservice-template-36f080fe1418)
 
+### customization example
+
+For an example customization of this template, see:
+- [Using Microsoft Orchestrator for Intent Recognition and Dispatch to Luis](https://github.com/wwlib/orchestrator-microservice)
+- https://github.com/wwlib/orchestrator-microservice
+
 ### install
 
 `npm install`

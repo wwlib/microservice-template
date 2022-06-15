@@ -65,7 +65,8 @@ export class JwtAuth {
                 permissions: [
                     {
                         scopes: [
-                            "read"
+                            "read",
+                            "admin"
                         ],
                         resource: "example"
                     }

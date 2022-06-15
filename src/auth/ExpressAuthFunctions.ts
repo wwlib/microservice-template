@@ -5,6 +5,7 @@ import { IncomingMessage } from 'http'
 import { WebSocketServer } from 'ws'
 import { Duplex } from 'stream'
 import { JwtAuth, ACCESS_TOKEN_NAME, REFRESH_TOKEN_NAME } from './JwtAuth'
+import { StatusCodes } from 'http-status-codes'
 
 export const noAuthHttp = () =>
   function noAuthNoPermissions(req: AuthRequest, res: Response, next: NextFunction) {
@@ -32,13 +33,18 @@ export const authHttp = (permissions: string[]) =>
         accessTokenPayload: decodedAccessToken
       }
       next();
-    } catch (error) {
-      if (refreshToken) {
-        const encodedUrl = encodeURIComponent(req.url)
-        console.log(`starting refresh. encoded url: ${encodedUrl}`)
-        res.redirect(`/refresh/?destination=${encodedUrl}`)
+    } catch (error: any) {
+      console.error(error)
+      if (error.code === StatusCodes.FORBIDDEN) {
+        res.redirect('/forbidden')
       } else {
-        res.redirect('/signin/')
+        if (refreshToken) {
+          const encodedUrl = encodeURIComponent(req.url)
+          console.log(`starting refresh. encoded url: ${encodedUrl}`)
+          res.redirect(`/refresh/?destination=${encodedUrl}`)
+        } else {
+          res.redirect('/signin/')
+        }
       }
     }
   }
@@ -59,21 +65,11 @@ export const checkPermissions = (expectedPermissions: string[], decodedAccessTok
     console.info('Authorization is enforced but no permissions are required for this request.')
     return
   }
-
-  try {
-    if (decodedAccessToken) {
-      const tokenPermissions = getPermissionsFromDecodedAccessToken(decodedAccessToken)
-      if (expectedPermissions.every((perm) => tokenPermissions.includes(perm))) {
-        return
-      } else {
-        throw errors.ForbiddenError('Invalid permissions.')
-      }
-    } else {
-      throw errors.ForbiddenError('Invalid token.')
-    }
-  } catch (error: any) {
-    console.error(error)
-    throw errors.ForbiddenError('Error veryfing permissions during checkPermissions.')
+  const tokenPermissions = getPermissionsFromDecodedAccessToken(decodedAccessToken)
+  if (expectedPermissions.every((perm) => tokenPermissions.includes(perm))) {
+    return
+  } else {
+    throw errors.ForbiddenError('Invalid permissions.')
   }
 }
 

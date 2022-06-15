@@ -6,22 +6,22 @@ export class ExpressRouterWrapper {
   private router: express.Router
   public path: string
   
-  private _authMiddleware: any = noAuthHttp
+  private _authFunction: any = noAuthHttp
 
   constructor (path: string, options?: any) {
     this.path = path
     this.router = express.Router({ mergeParams: true })
     if (options && options.useAuth) {
-      this._authMiddleware = authHttp
+      this._authFunction = authHttp
     }
   }
 
   public addGetHandler (path: string, handler: express.Handler, permissions: string[] = []) {
-    this.router.get(path, this._authMiddleware(permissions), asyncHandler(handler))
+    this.router.get(path, this._authFunction(permissions), asyncHandler(handler))
   }
 
   public addPostHandler (path: string, handler: express.Handler, permissions: string[] = []) {
-    this.router.post(path, this._authMiddleware(permissions), asyncHandler(handler))
+    this.router.post(path, this._authFunction(permissions), asyncHandler(handler))
   }
 
   // some paths should never be authenticated: i.e. signin pages and requests

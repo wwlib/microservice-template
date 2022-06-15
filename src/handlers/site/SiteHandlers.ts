@@ -73,4 +73,9 @@ export class SiteHandlers {
         return console_handlebars({ linkStates: { dashboard: '', console: 'active' }, userId: userId, command, requestCount: Model.getInstance().requestCount, summary, details })
     }
 
+    public forbiddenHandler: Handler = async (req: AuthRequest, res: Response) => {
+        console.log('forbiddenHandler')
+        Model.getInstance().onRequest()
+        res.status(StatusCodes.OK).json({ error: 'Forbidden.' })
+    }
 }
