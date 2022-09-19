@@ -34,7 +34,7 @@ export const authHttp = (permissions: string[]) =>
       }
       next();
     } catch (error: any) {
-      console.error(error)
+      console.error('Error:', error.message)
       if (error.code === StatusCodes.FORBIDDEN) {
         res.redirect('/forbidden')
       } else {
@@ -60,10 +60,13 @@ export const getPermissionsFromDecodedAccessToken = (payload: any): string[] => 
   }
 }
 
-export const checkPermissions = (expectedPermissions: string[], decodedAccessToken?: any) => {
+export const checkPermissions = (expectedPermissions: string[], decodedAccessToken: any) => {
   if (!expectedPermissions.length) {
     console.info('Authorization is enforced but no permissions are required for this request.')
     return
+  }
+  if (!decodedAccessToken) {
+    throw new Error('decodedAccessToken is undefined.')
   }
   const tokenPermissions = getPermissionsFromDecodedAccessToken(decodedAccessToken)
   if (expectedPermissions.every((perm) => tokenPermissions.includes(perm))) {
