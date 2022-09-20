@@ -1,11 +1,13 @@
 import express from 'express'
 import http, { Server } from 'http'
-import { WebSocketServer } from 'ws'
+// import { WebSocketServer } from 'ws'
 import dotenv from 'dotenv'
 import * as handlers from '@handlers'
 import { ExpressRouterWrapper } from './util/ExpressRouterWrapper'
-import { WSSRoutes, setupWebSocketServer } from './util/WebSocketServerWrapper'
+// import { WSSRoutes, setupWebSocketServer } from './util/WebSocketServerWrapper'
+import { setupSocketIoDeviceServer } from './SocketIoDeviceServer'
 
+const cors = require('cors');
 const cookieParser = require("cookie-parser");
 
 dotenv.config()
@@ -18,6 +20,12 @@ const main = async () => {
   app.use(express.text())
   app.use(express.static('public'));
   app.use(cookieParser());
+
+  // https://www.section.io/engineering-education/how-to-use-cors-in-nodejs-with-express/
+  app.use(cors({
+    origin: 'http://localhost:3000',
+    credentials: true,
+  }));
 
   // HealthCheck
   app.get('/healthcheck', handlers.HealthCheckHandler)
@@ -58,12 +66,14 @@ const main = async () => {
 
   // socket routes
 
-  const wssRoutes: WSSRoutes = [
-    { path: '/ws-echo', handler: handlers.wsEchoHandler, permissions: ['example:read'] },
-    { path: '/ws-silent', handler: handlers.wsSilentHandler, permissions: ['example:read'] },
-  ]
-  const wss: WebSocketServer = setupWebSocketServer(httpServer, wssRoutes, serviceOptions)
-  
+  // const wssRoutes: WSSRoutes = [
+  //   { path: '/ws-echo', handler: handlers.wsEchoHandler, permissions: ['example:read'] },
+  //   { path: '/ws-silent', handler: handlers.wsSilentHandler, permissions: ['example:read'] },
+  // ]
+  // const wss: WebSocketServer = setupWebSocketServer(httpServer, wssRoutes, serviceOptions)
+
+  setupSocketIoDeviceServer(httpServer, '/socket-device/')
+
   process.on('SIGINT', () => {
     console.warn('Received interrupt, shutting down')
     httpServer.close()

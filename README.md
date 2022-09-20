@@ -70,7 +70,7 @@ curl --location --request POST 'http://localhost:8000/post' \
 ```
 
 ```json
-{"status":"OK","utterance":"hello","userId":"user1"}
+{"status":"OK","utterance":"hello","accountId":"user1"}
 ```
 
 
@@ -79,7 +79,7 @@ curl --location --request POST 'http://localhost:8000/post' \
 curl --location --request POST 'http://localhost:8000/auth' \
      --header 'Content-Type: application/json' \
      --data-raw '{
-       "username": "user1",
+       "accountId": "user1",
        "password": "12345!"
      }'
 ```

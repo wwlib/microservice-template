@@ -19,13 +19,13 @@ export class JwtAuth {
     static REFRESH_TOKEN_EXPIRES_IN: string = '1d'
 
     // a mock signIn method using ACCESS_PRIVATE_KEY_MOCK to sign tokens
-    static signIn = (username: string, password: string): Promise<AuthResult> => {
+    static signIn = (accountId: string, password: string): Promise<AuthResult> => {
         return new Promise<any>((resolve, reject) => {
-            const accessTokenPayload = JwtAuth.getAccessTokenPayload(username)
+            const accessTokenPayload = JwtAuth.getAccessTokenPayload(accountId)
             const refreshTokenPayload = {
-                userId: 'TBD',
+                accountId: 'TBD',
             }
-            refreshTokenPayload.userId = username
+            refreshTokenPayload.accountId = accountId
             jwt.sign(accessTokenPayload, JwtAuth.ACCESS_PRIVATE_KEY_MOCK, { algorithm: 'HS256', expiresIn: JwtAuth.ACCESS_TOKEN_EXPIRES_IN }, function (err: any, accessToken: string) {
                 if (err) {
                     reject(err)
@@ -35,7 +35,7 @@ export class JwtAuth {
                             reject(err)
                         } else {
 
-                            resolve({ access_token: accessToken, refresh_token: refreshToken, user_id: accessTokenPayload.userId })
+                            resolve({ access_token: accessToken, refresh_token: refreshToken, user_id: accessTokenPayload.accountId })
                         }
                     })
                 }
@@ -44,23 +44,23 @@ export class JwtAuth {
     }
 
     // a mock refresh method using ACCESS_PRIVATE_KEY_MOCK to sign tokens
-    static refresh = (userId: string): Promise<AuthResult> => {
+    static refresh = (accountId: string): Promise<AuthResult> => {
         return new Promise<any>((resolve, reject) => {
-            const accessTokenPayload = JwtAuth.getAccessTokenPayload(userId)
+            const accessTokenPayload = JwtAuth.getAccessTokenPayload(accountId)
             jwt.sign(accessTokenPayload, JwtAuth.ACCESS_PRIVATE_KEY_MOCK, { algorithm: 'HS256', expiresIn: JwtAuth.ACCESS_TOKEN_EXPIRES_IN }, function (err: any, accessToken: string) {
                 if (err) {
                     reject(err)
                 } else {
-                    resolve({ access_token: accessToken, user_id: accessTokenPayload.userId })
+                    resolve({ access_token: accessToken, user_id: accessTokenPayload.accountId })
                 }
             })
         })
     }
 
     // mock method to generate access token payload with permissions
-    static getAccessTokenPayload(userId: string): any {
+    static getAccessTokenPayload(accountId: string): any {
         return {
-            userId: userId,
+            accountId: accountId,
             auth: {
                 permissions: [
                     {

@@ -9,6 +9,9 @@
   "author": "Andrew Rapo <andrew@wwlib.org> (http://wwlib.org/)",
   "license": "MIT",
   "dependencies": {
-    "axios": "^0.24.0"
+    "axios": "^0.24.0",
+    "promise": "^8.1.0",
+    "socket.io-client": "^4.5.1",
+    "timesync": "^1.0.10"
   }
 }

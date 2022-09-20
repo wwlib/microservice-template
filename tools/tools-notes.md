@@ -12,11 +12,12 @@ Note: The microservice-template includes an `/auth` route that serves JWT tokens
 
 ### run
 
-`node socket-cli.js`
+`node socket-io-device-cli.js`
 
-This will start a REPL that will accept and echo prompts.
+This will start a REPL that will accept prompts, turn them into Commands and send them to the server.
 
 ```
 > hello
-hello
+sent
 ```
+A clock sync process (via socket.io) will start automatically.
