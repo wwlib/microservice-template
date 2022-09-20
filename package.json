@@ -4,9 +4,20 @@
   "private": true,
   "description": "Microservice template",
   "main": "/dist/index.js",
+  "watch": {
+    "build": {
+      "patterns": [
+        "public",
+        "src"
+      ],
+      "extensions": "ts"
+    },
+    "start": "dist/index.js"
+  },
   "scripts": {
     "build": "webpack",
     "build:local": "NODE_ENV=development npm run build",
+    "watch": "npm-watch",
     "start": "node -r dotenv/config dist/index.js",
     "start:local": "npm run start | pino-pretty -c -l -t SYS:standard",
     "lint": "eslint --ext js,ts src test",
@@ -27,6 +38,7 @@
     "handlebars-loader": "^1.7.2",
     "http-status-codes": "^2.1.4",
     "jsonwebtoken": "^8.5.1",
+    "npm-watch": "^0.11.0",
     "pino-pretty": "^7.1.0",
     "ws": "^8.6.0"
   },

@@ -15,9 +15,9 @@ function setupSigninForm() {
                 window.location.href = "/";
             }
         }
-        var username = document.getElementById("usernameField").value
+        var accountId = document.getElementById("accountIdField").value
         var password = document.getElementById("passwordField").value
-        var data = JSON.stringify({ username, password })
+        var data = JSON.stringify({ accountId, password })
         request.send(data)
     });
 }

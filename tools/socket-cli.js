@@ -10,17 +10,17 @@ dotenv.config();
 // curl --location --request POST 'https://localhost:8000/auth' \
 //     --header 'Content-Type: application/json' \
 //     --data-raw '{
-//        "username": "user1",
+//        "accountId": "user1",
 //        "password": "asldkfj"
 //      }'
 
 async function getToken() {
     if (process.env.TOKEN) {
         return process.env.TOKEN;
-    } else if (process.env.AUTH_URL && process.env.USERNAME && process.env.PASSWORD) {
+    } else if (process.env.AUTH_URL && process.env.ACCOUNTID && process.env.PASSWORD) {
         return new Promise((resolve, reject) => {
             axios.post(process.env.AUTH_URL, {
-                username: process.env.USERNAME,
+                accountId: process.env.ACCOUNTID,
                 password: process.env.PASSWORD
             },
             {

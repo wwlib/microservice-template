@@ -26,10 +26,10 @@ export const authHttp = (permissions: string[]) =>
         accessToken = req.cookies[ACCESS_TOKEN_NAME] as string
       }
       const decodedAccessToken = JwtAuth.decodeAccessToken(accessToken, refreshToken)
-      const userId = decodedAccessToken ? decodedAccessToken.userId : ''
+      const accountId = decodedAccessToken ? decodedAccessToken.accountId : ''
       checkPermissions(expectedPermissions, decodedAccessToken)
       req.auth = {
-        userId,
+        accountId,
         accessTokenPayload: decodedAccessToken
       }
       next();

@@ -1,7 +1,7 @@
 import { Request } from 'express'
 
 export interface AuthRequestData {
-  userId: string
+  accountId: string
   accessTokenPayload: any
 }
 export interface AuthRequest extends Request {
