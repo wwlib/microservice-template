@@ -1,21 +1,15 @@
-import { RCSCommand } from 'robokit-command-system';
 import { Socket } from 'socket.io';
 
 export enum ConnectionType {
     DEVICE = 'device',
-    APP = 'app',
-    CONTROLLER = 'controller',
 }
 
-export enum ConnectionEventType {
-    COMMAND_FROM = 'command_from',
-    COMMAND_TO = 'command_to',
-    MESSAGE_FROM = 'message_from',
-    MESSAGE_TO = 'message_to',
-    AUDIO_BYTES_FROM = 'audio_bytes_from'
+export enum ConnectionAnalyticsEventType {
+    MESSAGE_IN = 'message_in',
+    MESSAGE_OUT = 'message_out',
 }
 
-export default class Connection {
+export class Connection {
 
     private _type: ConnectionType;
     private _socket: Socket | undefined;
@@ -23,14 +17,9 @@ export default class Connection {
     private _accountId: string;
     private _syncOffset: number;
     private _lastSyncTimestamp: number;
-    private _commandCountFrom: number;
-    private _commandCountFromQuota: number;
-    private _commandCountTo: number;
-    private _messageCountFrom: number;
-    private _messageCountFromQuota: number;
-    private _messageCountTo: number;
-    private _audioBytesFrom: number;
-    private _audioBytesFromQuota: number;
+    private _messageCountIn: number;
+    private _messageCountInQuota: number;
+    private _messageCountOut: number;
     private _syncOffest: number;
 
     constructor(type: ConnectionType, socket: Socket, accountId: string) {
@@ -40,14 +29,9 @@ export default class Connection {
         this._accountId = accountId
         this._syncOffset = 0
         this._lastSyncTimestamp = 0
-        this._commandCountFrom = 0
-        this._commandCountFromQuota = 0
-        this._commandCountTo = 0
-        this._messageCountFrom = 0
-        this._messageCountFromQuota = 0
-        this._messageCountTo = 0
-        this._audioBytesFrom = 0
-        this._audioBytesFromQuota = 0
+        this._messageCountIn = 0
+        this._messageCountInQuota = 0
+        this._messageCountOut = 0
         this._syncOffest = 0;
     }
 
@@ -61,7 +45,7 @@ export default class Connection {
 
     toString(): string {
         const syncOffset = Math.round(this._syncOffest * 1000) / 1000
-        return `${this._accountId}: [${this._socketId.substring(0, 6)}] syncOffset: ${syncOffset} ms, commandsFrom: ${this._commandCountFrom}. messagesFrom: ${this._messageCountFrom}, audioFrom: ${this._audioBytesFrom}`
+        return `${this._accountId}: [${this._socketId.substring(0, 6)}] syncOffset: ${syncOffset} ms, messagesIn: ${this._messageCountIn}, messagesOut: ${this._messageCountOut}`
     }
 
     sendMessage(message: unknown) {
@@ -70,28 +54,13 @@ export default class Connection {
         }
     }
 
-    sendCommand(command: RCSCommand) {
-        if (this._socket && this._socket.connected) {
-            this._socket.emit('command', command)
-        }
-    }
-
-    onEvent(eventType: ConnectionEventType, data: string | number) {
+    onAnalyticsEvent(eventType: ConnectionAnalyticsEventType) {
         switch (eventType) {
-            case ConnectionEventType.COMMAND_FROM:
-                this._commandCountFrom += 1
+            case ConnectionAnalyticsEventType.MESSAGE_IN:
+                this._messageCountIn += 1
                 break;
-            case ConnectionEventType.COMMAND_TO:
-                this._commandCountTo += 1
-                break;
-            case ConnectionEventType.MESSAGE_FROM:
-                this._messageCountFrom += 1
-                break;
-            case ConnectionEventType.MESSAGE_TO:
-                this._messageCountTo += 1
-                break;
-            case ConnectionEventType.AUDIO_BYTES_FROM:
-                this._audioBytesFrom += +data
+            case ConnectionAnalyticsEventType.MESSAGE_OUT:
+                this._messageCountOut += 1
                 break;
         }
     }
@@ -102,6 +71,7 @@ export default class Connection {
 
     emitEvent(eventName: string, data?: any) {
         if (this._socket) {
+            this.onAnalyticsEvent(ConnectionAnalyticsEventType.MESSAGE_OUT)
             this._socket.emit(eventName, data)
         }
     }

@@ -2,6 +2,9 @@ import { Request, Response, Handler } from 'express'
 import { AuthRequest } from '@types'
 import { StatusCodes } from 'http-status-codes'
 import { Model } from '@model'
+import { Connection, ConnectionType } from "src/connection/Connection";
+import { ConnectionManager } from 'src/connection/ConnectionManager';
+
 
 // handlebars templates are loaded by WebPack using handlebars-loader
 // https://www.npmjs.com/package/handlebars-loader
@@ -41,7 +44,15 @@ export class SiteHandlers {
         for (let i=0; i<7; i++) {
             data.push(15000 + Math.floor(Math.random()*5000))
         }
-        return dashboard_handlebars({ linkStates: { dashboard: 'active', console: '' }, accountId: accountId, requestCount: Model.getInstance().requestCount, chartData: data.join(',') })
+        const deviceConnections: Connection[] | undefined = ConnectionManager.getInstance().getConnectionsAsArray(ConnectionType.DEVICE)
+        // console.log(deviceConnections)
+        let deviceInfo: string[] = []
+        if (deviceConnections) {
+            deviceInfo = deviceConnections.map((connection: Connection) => {
+                return connection.toString()
+            })
+        }
+        return dashboard_handlebars({ linkStates: { dashboard: 'active', console: '' }, accountId: accountId, requestCount: Model.getInstance().requestCount, chartData: data.join(','), deviceConnections: deviceInfo.join(',') })
     }
 
     static consoleHandler: Handler = async (req: AuthRequest, res: Response) => {

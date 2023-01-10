@@ -1,26 +1,16 @@
 import { Socket } from 'socket.io';
-import Connection, { ConnectionType, ConnectionEventType } from './Connection';
-import Subscription from './Subscription';
-import { RCSCommand } from 'robokit-command-system'
+import { Connection, ConnectionType, ConnectionAnalyticsEventType } from './Connection';
 
-export default class ConnectionManager {
+export class ConnectionManager {
 
     private static instance: ConnectionManager
 
     private _deviceConnections: Map<string, Connection>
     private _deviceConnectionsByAccountId: Map<string, Connection>
-    private _deviceSubscriptions: Map<string, Subscription[]> // { [accountId: string]: Subscription[] }
-    private _controllerConnections: Map<string, Connection>
-    private _appConnections: Map<string, Connection>
-    private _appSubscriptions: Map<string, Subscription[]>
 
     private constructor() {
         this._deviceConnections = new Map<string, Connection>()
         this._deviceConnectionsByAccountId = new Map<string, Connection>()
-        this._deviceSubscriptions = new Map<string, Subscription[]>()
-        this._controllerConnections = new Map<string, Connection>()
-        this._appConnections = new Map<string, Connection>()
-        this._appSubscriptions = new Map<string, Subscription[]>()
     }
 
     public static getInstance(): ConnectionManager {
@@ -35,12 +25,6 @@ export default class ConnectionManager {
         switch (type) {
             case ConnectionType.DEVICE:
                 result = this._deviceConnections
-                break;
-            case ConnectionType.APP:
-                result = this._appConnections
-                break;
-            case ConnectionType.CONTROLLER:
-                result = this._controllerConnections
                 break;
         }
         return result
@@ -103,74 +87,10 @@ export default class ConnectionManager {
         }
     }
 
-    onAnalyticsEvent(type: ConnectionType, socket: Socket, eventType: ConnectionEventType, data?: string | number) {
+    onAnalyticsEvent(type: ConnectionType, socket: Socket, eventType: ConnectionAnalyticsEventType) {
         const connection = this.getConnectionWithTypeAndSocketId(type, socket.id)
         if (connection) {
-            connection.onEvent(eventType, data || '')
-        }
-    }
-
-    subscribeToConnection(type: ConnectionType, accountId: string, socket: Socket) {
-        if (type === ConnectionType.DEVICE) {
-            const connection = this._controllerConnections.get(socket.id)
-            if (connection) {
-                const newSubscription: Subscription = new Subscription(accountId, socket.data.accountId,
-                    (command) => {
-                        connection.sendCommand(command)
-                    },
-                    (message) => {
-                        connection.sendMessage(message)
-                    })
-                const subscriptions = this._deviceSubscriptions.get(accountId) || []
-                this._deviceSubscriptions.set(accountId, [...subscriptions, newSubscription])
-                console.log(`subscribeToConnection: ${type}, ${accountId}`)
-            }
-        }
-    }
-
-    unsubscribeFromConnection(type: ConnectionType, accountId: string) {
-        if (type === ConnectionType.DEVICE) {
-            const subscriptions = this._deviceSubscriptions.get(accountId)
-            if (subscriptions) {
-                // const filteredSubscriptions = subscriptions.filter((subscription) => subscription.accountId != accountId);
-                let filteredSubscriptions: Subscription[] = []
-                subscriptions.forEach((subscription: Subscription) => {
-                    if (subscription.accountId === accountId) {
-                        console.log(`unsubscribeFromConnection ${type}, ${accountId}`)
-                        subscription.dispose()
-                    } else {
-                        filteredSubscriptions.push(subscription)
-                    }
-                })
-                this._deviceSubscriptions.set(accountId, filteredSubscriptions)
-            }
-        }
-    }
-
-    broadcastDeviceCommandToSubscriptionsWithAccountId(accountId: string, command: RCSCommand) {
-        const subscriptions: Subscription[] | undefined = this._deviceSubscriptions.get(accountId)
-        if (subscriptions) {
-            subscriptions.forEach((subscription: Subscription) => {
-                console.log(`broadcasting command to subscribers to: ${subscription.accountId}:`, subscription)
-                subscription.onCommand(command)
-            })
-        }
-    }
-
-    broadcastDeviceMessageToSubscriptionsWithAccountId(accountId: string, message: unknown) {
-        const subscriptions: Subscription[] | undefined = this._deviceSubscriptions.get(accountId)
-        if (subscriptions) {
-            subscriptions.forEach((subscription: Subscription) => {
-                console.log(`broadcasting message to subscribers to: ${subscription.accountId}:`, subscription)
-                subscription.onMessage(message)
-            })
-        }
-    }
-
-    sendCommandToTarget(type: ConnectionType, command: RCSCommand, targetAccountId: string) {
-        const connection = this.getConnectionWithTypeAndAccountId(type, targetAccountId)
-        if (connection) {
-            connection.sendCommand(command)
+            connection.onAnalyticsEvent(eventType)
         }
     }
 }

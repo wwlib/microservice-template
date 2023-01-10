@@ -5,9 +5,10 @@ const readline = require("readline");
 const axios = require('axios');
 const { io } = require("socket.io-client");
 const timesync = require('timesync');
-const rcs = require('robokit-command-system')
 
 dotenv.config();
+
+let showTimeEvents = false;
 
 /*
 curl --location --request POST 'http://localhost:8000/auth' \
@@ -62,19 +63,6 @@ function connect(token) {
         reconnection: false,
     });
 
-    // synchronized clock
-
-    onSynchronizedClockUpdate = (timeData) => {
-        if (showTimeEvents) {
-            console.log(`clockUpdate: ${timeData.simpleFormat}`)
-        }
-    }
-
-    let showTimeEvents = false
-    let synchronizedClock = new rcs.SynchronizedClock();
-    synchronizedClock.on('1sec', onSynchronizedClockUpdate)
-    synchronizedClock.startUpdate()
-
     // timesync
 
     const ts = timesync.create({
@@ -89,9 +77,6 @@ function connect(token) {
     ts.on('change', function (offset) {
         if (showTimeEvents) {
             console.log('timesync: changed offset: ' + offset + ' ms');
-        }
-        if (synchronizedClock) {
-            synchronizedClock.onSyncOffsetChanged(offset)
         }
         const command = {
             id: 'tbd',
@@ -129,22 +114,7 @@ function connect(token) {
 
     socket.on('disconnect', function () {
         console.log(`on disconnect. closing...`);
-        if (synchronizedClock) {
-            synchronizedClock.dispose()
-            synchronizedClock = undefined
-        }
         process.exit(0);
-    });
-
-    rcs.CommandProcessor.getInstance().on('commandCompleted', (commandAck) => {
-        console.log(`command completed:`, commandAck)
-        socket.emit('command', commandAck)
-    })
-
-    socket.on('command', function (command) {
-        console.log('command', command);
-        rcs.CommandProcessor.getInstance().processCommand(command)
-        ask("> ");
     });
 
     socket.on('message', function (data) {

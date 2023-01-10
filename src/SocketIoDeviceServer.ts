@@ -1,12 +1,8 @@
 import { Server as HTTPServer } from 'http'
 import { Server as SocketIoServer } from 'socket.io'
 import { JwtAuth } from './auth/JwtAuth'
-import ConnectionManager from 'src/connection/ConnectionManager'
-import { ConnectionEventType, ConnectionType } from 'src/connection/Connection'
-// import ASRSessionHandler from './asr/ASRSessionHandler'
-// import { ASRStreamingSessionConfig } from 'cognitiveserviceslib'
-import { RCSCommand, RCSCommandType, RCSCommandName } from 'robokit-command-system'
-
+import { ConnectionManager } from 'src/connection/ConnectionManager'
+import { ConnectionAnalyticsEventType, ConnectionType } from 'src/connection/Connection'
 
 export const setupSocketIoDeviceServer = (httpServer: HTTPServer, path: string): SocketIoServer => {
     const ioSocketServer = new SocketIoServer(httpServer, {
@@ -43,26 +39,23 @@ export const setupSocketIoDeviceServer = (httpServer: HTTPServer, path: string):
         socket.emit('message', { source: 'Microservice', event: 'handshake', message: 'DEVICE connection accepted' })
 
 
-        socket.on('command', (command: RCSCommand) => {
+        socket.on('command', (command: any) => {
             console.log(`DeviceServer: on command:`, socket.id, socket.data.accountId, command)
-            ConnectionManager.getInstance().onAnalyticsEvent(ConnectionType.DEVICE, socket, ConnectionEventType.COMMAND_FROM)
-            if (command.type === RCSCommandType.sync && command.name === RCSCommandName.syncOffset) {
+            if (command.type === 'sync' && command.name === 'syncOffset') {
                 if (command.payload && typeof command.payload.syncOffset === 'number' ) {
                     if (connection) {
                         console.log(`updating syncOffset for device socket: ${socket.id}`)
                         connection.onSyncOffset(command.payload.syncOffset)
                     }
                 }
-            } else {
-                ConnectionManager.getInstance().broadcastDeviceCommandToSubscriptionsWithAccountId(socket.data.accountId, command)
             }
         })
 
         socket.on('message', (message: string) => {
             console.log(`on message: ${message}`, socket.id, socket.data.accountId)
-            ConnectionManager.getInstance().onAnalyticsEvent(ConnectionType.DEVICE, socket, ConnectionEventType.MESSAGE_FROM)
-            ConnectionManager.getInstance().broadcastDeviceMessageToSubscriptionsWithAccountId(socket.data.accountId, { message: message })
+            ConnectionManager.getInstance().onAnalyticsEvent(ConnectionType.DEVICE, socket, ConnectionAnalyticsEventType.MESSAGE_IN)
             socket.emit('message', { source: 'Microservice', event: 'reply', data: message })
+            ConnectionManager.getInstance().onAnalyticsEvent(ConnectionType.DEVICE, socket, ConnectionAnalyticsEventType.MESSAGE_OUT)
         })
 
         socket.once('disconnect', function (reason: string) {

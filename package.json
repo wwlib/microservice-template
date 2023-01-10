@@ -40,7 +40,6 @@
     "jsonwebtoken": "^8.5.1",
     "npm-watch": "^0.11.0",
     "pino-pretty": "^7.1.0",
-    "robokit-command-system": "https://github.com/wwlib/robokit-command-system#bugfix/andrew/clock-tweaks",
     "socket.io": "^4.5.2",
     "ws": "^8.6.0"
   },
@@ -75,7 +74,7 @@
     "url": "git@github.com:wwlib/microservice-template.git"
   },
   "keywords": [
-    "microservice,jwt,jsonwebtoken"
+    "microservice,jwt,jsonwebtoken,socket.io"
   ],
   "author": "Andrew Rapo <andrew@wwlib.org> (http://wwlib.org/)",
   "license": "MIT"
