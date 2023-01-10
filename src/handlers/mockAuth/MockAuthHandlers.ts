@@ -4,19 +4,8 @@ import { StatusCodes } from 'http-status-codes'
 import { JwtAuth, AuthResult, ACCESS_TOKEN_NAME, REFRESH_TOKEN_NAME } from '@auth';
 
 export class MockAuthHandlers {
-  private static instance: MockAuthHandlers;
 
-  private constructor() {
-  }
-
-  public static getInstance(): MockAuthHandlers {
-    if (!MockAuthHandlers.instance) {
-      MockAuthHandlers.instance = new MockAuthHandlers()
-    }
-    return MockAuthHandlers.instance
-  }
-
-  public authHandler: Handler = async (req: AuthRequest, res: Response) => {
+  static authHandler: Handler = async (req: AuthRequest, res: Response) => {
     const accountId = req.body?.accountId || req.query?.accountId
     const password = req.body?.password || req.query?.password
     // signIn
@@ -36,7 +25,7 @@ export class MockAuthHandlers {
     }
   }
 
-  public refreshHandler: Handler = async (req: AuthRequest, res: Response) => {
+  static refreshHandler: Handler = async (req: AuthRequest, res: Response) => {
     const refreshToken = req.cookies ? req.cookies[REFRESH_TOKEN_NAME] as string : ''
     if (refreshToken) {
       try {
