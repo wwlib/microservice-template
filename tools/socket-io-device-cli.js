@@ -148,7 +148,7 @@ function connect(token) {
     });
 
     socket.on('message', function (data) {
-        console.log(data.message);
+        console.log(data);
         ask("> ");
     });
 

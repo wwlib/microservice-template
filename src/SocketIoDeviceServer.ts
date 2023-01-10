@@ -40,12 +40,12 @@ export const setupSocketIoDeviceServer = (httpServer: HTTPServer, path: string):
     ioSocketServer.on('connection', function (socket: any) {
         console.log(`socket.io: on DEVICE connection:`, socket.id)
         const connection = ConnectionManager.getInstance().addConnection(ConnectionType.DEVICE, socket, socket.data.accountId)
-        socket.emit('message', { message: 'A new DEVICE has joined!' })
+        socket.emit('message', { source: 'Microservice', event: 'handshake', message: 'DEVICE connection accepted' })
+
 
         socket.on('command', (command: RCSCommand) => {
             console.log(`DeviceServer: on command:`, socket.id, socket.data.accountId, command)
             ConnectionManager.getInstance().onAnalyticsEvent(ConnectionType.DEVICE, socket, ConnectionEventType.COMMAND_FROM)
-            ConnectionManager.getInstance().onAnalyticsEvent(ConnectionType.CONTROLLER, socket, ConnectionEventType.COMMAND_TO)
             if (command.type === RCSCommandType.sync && command.name === RCSCommandName.syncOffset) {
                 if (command.payload && typeof command.payload.syncOffset === 'number' ) {
                     if (connection) {
@@ -61,9 +61,8 @@ export const setupSocketIoDeviceServer = (httpServer: HTTPServer, path: string):
         socket.on('message', (message: string) => {
             console.log(`on message: ${message}`, socket.id, socket.data.accountId)
             ConnectionManager.getInstance().onAnalyticsEvent(ConnectionType.DEVICE, socket, ConnectionEventType.MESSAGE_FROM)
-            ConnectionManager.getInstance().onAnalyticsEvent(ConnectionType.CONTROLLER, socket, ConnectionEventType.MESSAGE_TO)
             ConnectionManager.getInstance().broadcastDeviceMessageToSubscriptionsWithAccountId(socket.data.accountId, { message: message })
-            socket.emit('message', { message: 'sent', data: message })
+            socket.emit('message', { source: 'Microservice', event: 'reply', data: message })
         })
 
         socket.once('disconnect', function (reason: string) {

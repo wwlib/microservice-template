@@ -11,43 +11,32 @@ const dashboard_handlebars = require('./dashboard.handlebars.html');
 const console_handlebars = require('./console.handlebars.html');
 
 export class SiteHandlers {
-    private static instance: SiteHandlers;
 
-    private constructor() {
-    }
-
-    public static getInstance(): SiteHandlers {
-        if (!SiteHandlers.instance) {
-            SiteHandlers.instance = new SiteHandlers()
-        }
-        return SiteHandlers.instance
-    }
-
-    public redirectToDashboardHandler: Handler = async (req: AuthRequest, res: Response) => {
+    static redirectToDashboardHandler: Handler = async (req: AuthRequest, res: Response) => {
         res.status(StatusCodes.OK).redirect('/dashboard/');
     }
 
-    public redirectToConsoleHandler: Handler = async (req: AuthRequest, res: Response) => {
+    static redirectToConsoleHandler: Handler = async (req: AuthRequest, res: Response) => {
         res.status(StatusCodes.OK).redirect('/console/');
     }
 
-    public signinHandler: Handler = async (req: AuthRequest, res: Response) => {
+    static signinHandler: Handler = async (req: AuthRequest, res: Response) => {
         console.log('signinHandler')
         Model.getInstance().onRequest()
-        res.status(StatusCodes.OK).send(this.getSigninContent(req.auth?.accountId))
+        res.status(StatusCodes.OK).send(SiteHandlers.getSigninContent(req.auth?.accountId))
     }
 
-    private getSigninContent(accountId?: string) {
+    static getSigninContent(accountId?: string) {
         return signin_handlebars({ accountId: accountId })
     }
 
-    public dashboardHandler: Handler = async (req: AuthRequest, res: Response) => {
+    static dashboardHandler: Handler = async (req: AuthRequest, res: Response) => {
         console.log('dashboardHandler')
         Model.getInstance().onRequest()
-        res.status(StatusCodes.OK).send(this.getDashboardContent(req.auth?.accountId))
+        res.status(StatusCodes.OK).send(SiteHandlers.getDashboardContent(req.auth?.accountId))
     }
 
-    private getDashboardContent(accountId?: string) {
+    static getDashboardContent(accountId?: string) {
         const data = []
         for (let i=0; i<7; i++) {
             data.push(15000 + Math.floor(Math.random()*5000))
@@ -55,7 +44,7 @@ export class SiteHandlers {
         return dashboard_handlebars({ linkStates: { dashboard: 'active', console: '' }, accountId: accountId, requestCount: Model.getInstance().requestCount, chartData: data.join(',') })
     }
 
-    public consoleHandler: Handler = async (req: AuthRequest, res: Response) => {
+    static consoleHandler: Handler = async (req: AuthRequest, res: Response) => {
         console.log('consoleHandler')
         Model.getInstance().onRequest()
         const command: string = req.query?.command ? `${req.query?.command}` : ''
@@ -66,14 +55,14 @@ export class SiteHandlers {
             summary = 'Model:resetRequestCount.'
             details = 'requestCount reset successfully.'
         }
-        res.status(StatusCodes.OK).send(this.getConsoleContent(req.auth?.accountId, command, summary, details))
+        res.status(StatusCodes.OK).send(SiteHandlers.getConsoleContent(req.auth?.accountId, command, summary, details))
     }
 
-    private getConsoleContent(accountId: string | undefined, command: string, summary: string, details: string) {
+    static getConsoleContent(accountId: string | undefined, command: string, summary: string, details: string) {
         return console_handlebars({ linkStates: { dashboard: '', console: 'active' }, accountId: accountId, command, requestCount: Model.getInstance().requestCount, summary, details })
     }
 
-    public forbiddenHandler: Handler = async (req: AuthRequest, res: Response) => {
+    static forbiddenHandler: Handler = async (req: AuthRequest, res: Response) => {
         console.log('forbiddenHandler')
         Model.getInstance().onRequest()
         res.status(StatusCodes.OK).json({ error: 'Forbidden.' })
