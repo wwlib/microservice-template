@@ -10,7 +10,7 @@ dotenv.config();
 // curl --location --request POST 'https://localhost:8000/auth' \
 //     --header 'Content-Type: application/json' \
 //     --data-raw '{
-//        "accountId": "user1",
+//        "accountId": "account1",
 //        "password": "asldkfj"
 //      }'
 
