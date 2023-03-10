@@ -40,11 +40,15 @@ export const setupSocketIoDeviceServer = (httpServer: HTTPServer, path: string):
 
 
         socket.on('command', (command: any) => {
-            console.log(`DeviceServer: on command:`, socket.id, socket.data.accountId, command)
-            if (command.type === 'sync' && command.name === 'syncOffset') {
-                if (command.payload && typeof command.payload.syncOffset === 'number' ) {
+            if (command.type === 'sync') {
+                if (process.env.DEBUG_CLOCK_SYNC === 'true') {
+                    console.log(`DEBUG_CLOCK_SYNC: DeviceServer: on sync command:`, socket.id, socket.data.accountId, command)
+                }
+                if (command.name === 'syncOffset' && command.payload && typeof command.payload.syncOffset === 'number' ) {
                     if (connection) {
-                        console.log(`updating syncOffset for device socket: ${socket.id}`)
+                        if (process.env.DEBUG_CLOCK_SYNC === 'true') {
+                            console.log(`DEBUG_CLOCK_SYNC: DeviceServer: updating syncOffset for Device socket: ${socket.id}`)
+                        }
                         connection.onSyncOffset(command.payload.syncOffset)
                     }
                 }

@@ -75,17 +75,30 @@ const main = async () => {
   setupSocketIoDeviceServer(httpServer, '/socket-device/')
 
   process.on('SIGINT', () => {
-    console.warn('Received interrupt, shutting down')
+    const errorTimestamp = new Date().toLocaleString()
+    console.error(`microservice-template: [${errorTimestamp}] Received interrupt, shutting down`)
     httpServer.close()
     process.exit(0)
   })
 
   httpServer.listen(port, () => {
-    console.info(`HTTP/WS server is ready and listening at port ${port}!`)
+    console.log(`microservice-template: (HTTP/ws/socket-io server) is ready and listening at port ${port}!`)
   })
+
+  process.on('uncaughtException', function (exception) {
+    const errorTimestamp = new Date().toLocaleString()
+    console.error(`microservice-template: [${errorTimestamp}] uncaughtException:`, exception);
+
+  });
+
+  process.on('unhandledRejection', (reason, p) => {
+    const errorTimestamp = new Date().toLocaleString()
+    console.error(`microservice-template: [${errorTimestamp}] unhandledRejection at: Promise`, p, " reason: ", reason);
+  });
 }
 
 main().catch((error) => {
-  console.error('Detected an unrecoverable error. Stopping!')
+  const errorTimestamp = new Date().toLocaleString()
+  console.error(`microservice-template: [${errorTimestamp}] Detected an unrecoverable error. Stopping!`)
   console.error(error)
 })
